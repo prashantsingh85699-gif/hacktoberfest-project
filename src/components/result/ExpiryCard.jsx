@@ -68,7 +68,7 @@ export function ExpiryCard({ expiry, expiryState, unknownMessage }) {
         </div>
       ) : (
         <div className="space-y-3">
-          <div className="flex items-baseline gap-3">
+          <div className="flex flex-wrap items-baseline gap-3">
             <span className="text-3xl font-extrabold font-heading text-[#0B1F33]">
               {formatIsoDate(expiry.iso)}
             </span>

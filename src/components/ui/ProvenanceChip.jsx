@@ -35,24 +35,24 @@ export function ProvenanceChip({ provenance }) {
   const info = PROVENANCE_INFO[provenance] || PROVENANCE_INFO[PROVENANCE.UNKNOWN];
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-flex items-center">
       <button
         type="button"
         onClick={() => setShowPopover(!showPopover)}
         onMouseEnter={() => setShowPopover(true)}
         onMouseLeave={() => setShowPopover(false)}
-        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-semibold tracking-wide transition-colors ${info.color} cursor-help`}
+        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[11px] font-bold tracking-tight transition-colors ${info.color} cursor-help whitespace-nowrap`}
         aria-label={`Provenance: ${info.label}`}
       >
-        <span>PROVENANCE:</span>
+        <span className="text-[9px] uppercase font-semibold opacity-70">PROV:</span>
         <span>{info.label}</span>
-        <Info className="w-3.5 h-3.5 opacity-70" />
+        <Info className="w-3 h-3 opacity-60" />
       </button>
 
       {showPopover && (
-        <div className="absolute z-30 bottom-full left-0 mb-2 w-72 p-3 bg-slate-900 text-white text-xs rounded-xl shadow-lg border border-slate-800 pointer-events-none">
-          <p className="font-semibold text-slate-100 mb-1">{info.label}</p>
-          <p className="text-slate-300 leading-relaxed">{info.description}</p>
+        <div className="absolute z-50 bottom-full left-0 mb-2 w-64 p-3 bg-slate-900 text-white text-xs rounded-xl shadow-xl border border-slate-800 pointer-events-none">
+          <p className="font-bold text-slate-100 mb-1">{info.label}</p>
+          <p className="text-slate-300 leading-relaxed text-[11px]">{info.description}</p>
           <div className="absolute top-full left-4 -mt-1 border-4 border-transparent border-t-slate-900" />
         </div>
       )}

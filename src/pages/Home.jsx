@@ -63,28 +63,28 @@ export function Home() {
             <StatusBadge status={PRIMARY_STATUS.ESTIMATED_VERIFIED_INPUTS} />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 bg-slate-50 rounded-xl space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80 space-y-2.5 overflow-hidden">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
                 Calculated Expiry Date
               </span>
-              <div className="flex items-baseline gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="text-2xl font-extrabold text-[#0B1F33]">14/01/2028</span>
                 <ProvenanceChip provenance={PROVENANCE.CALCULATED} />
               </div>
-              <p className="text-[11px] font-mono text-slate-600">
+              <p className="text-[11px] font-mono text-slate-600 bg-white p-2 rounded-lg border border-slate-200/70">
                 MFG 15/01/2026 + 24 months - 1 day = 14/01/2028
               </p>
             </div>
 
-            <div className="p-4 bg-slate-50 rounded-xl space-y-2">
+            <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80 space-y-2.5 overflow-hidden">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
                 Verified Manufacturer Claim
               </span>
-              <p className="text-xs italic text-slate-800">
-                "unopened shelf life is 24 months from manufacture date"
+              <p className="text-xs italic text-slate-800 leading-relaxed font-serif bg-white p-2 rounded-lg border border-slate-200/70">
+                "Unopened shelf life is 24 months from manufacture date"
               </p>
-              <span className="text-[10px] text-emerald-700 font-semibold block">
+              <span className="text-[10px] text-emerald-700 font-bold flex items-center gap-1">
                 ✓ Verified substring from demobrand.com
               </span>
             </div>
