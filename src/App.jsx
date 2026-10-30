@@ -24,7 +24,7 @@ export default function App() {
         <div className="min-h-screen flex flex-col bg-[#F7F8FB] text-[#0B1F33]">
           <Toaster richColors position="top-right" />
           <Navbar />
-          <main className="flex-1 pb-20 md:pb-6">
+          <main className="flex-1 pb-8">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/scan" element={<Scanner />} />

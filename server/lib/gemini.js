@@ -63,6 +63,7 @@ export async function extractWithGemini(validatedInput) {
   const apiKey = process.env.GEMINI_API_KEY;
   const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
   const fallbackModel = process.env.GEMINI_FALLBACK_MODEL || 'gemini-3.5-flash-lite';
+  const modelsToTry = [primaryModel, fallbackModel, 'gemini-2.5-flash'];
 
   if (!apiKey) {
     return null; // Will trigger demo mode
@@ -94,35 +95,29 @@ export async function extractWithGemini(validatedInput) {
     parts.push({ text: `User packaging hints: ${JSON.stringify(validatedInput.hints)}` });
   }
 
-  try {
-    const result = await callGeminiJson({
-      apiKey,
-      model: primaryModel,
-      system: SYSTEM_PROMPT_SCAN,
-      parts,
-    });
-    return { data: result, model: primaryModel };
-  } catch (err) {
-    console.warn(`Primary Gemini model (${primaryModel}) failed: ${err.message}. Retrying with fallback (${fallbackModel})...`);
+  let lastError = null;
+  for (const model of modelsToTry) {
     try {
       const result = await callGeminiJson({
         apiKey,
-        model: fallbackModel,
+        model,
         system: SYSTEM_PROMPT_SCAN,
         parts,
       });
-      return { data: result, model: fallbackModel };
-    } catch (fallbackErr) {
-      console.error(`Fallback Gemini model (${fallbackModel}) also failed:`, fallbackErr.message);
-      throw new HttpError(502, 'AI_UNAVAILABLE', 'The vision analysis service is temporarily unavailable. You may enter dates manually.');
+      return { data: result, model };
+    } catch (err) {
+      lastError = err;
+      console.warn(`Gemini model (${model}) encountered ${err.message}. Trying next available fallback...`);
     }
   }
+
+  console.error('All Gemini vision models exhausted:', lastError?.message);
+  throw new HttpError(502, 'AI_UNAVAILABLE', 'The vision analysis service is temporarily busy. You may enter dates manually.');
 }
 
 export async function extractEvidenceWithGemini(identity, sources) {
   const apiKey = process.env.GEMINI_API_KEY;
-  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
-  const fallbackModel = process.env.GEMINI_FALLBACK_MODEL || 'gemini-3.5-flash-lite';
+  const models = [process.env.GEMINI_MODEL || 'gemini-3.8-flash', process.env.GEMINI_FALLBACK_MODEL || 'gemini-3.5-flash-lite', 'gemini-2.5-flash'];
 
   if (!apiKey) return null;
 
@@ -134,24 +129,19 @@ export async function extractEvidenceWithGemini(identity, sources) {
     },
   ];
 
-  try {
-    return await callGeminiJson({
-      apiKey,
-      model: primaryModel,
-      system: SYSTEM_PROMPT_EVIDENCE,
-      parts,
-    });
-  } catch (err) {
+  for (const model of models) {
     try {
       return await callGeminiJson({
         apiKey,
-        model: fallbackModel,
+        model,
         system: SYSTEM_PROMPT_EVIDENCE,
         parts,
       });
     } catch {
-      return null;
+      // Try next
     }
   }
+
+  return null;
 }
 

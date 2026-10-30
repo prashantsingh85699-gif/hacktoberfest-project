@@ -87,7 +87,32 @@ async function generate() {
   });
   await sharp(f6).jpeg({ quality: 90 }).toFile(path.join(outDir, 'fixture-6-damaged-pack.jpg'));
 
-  console.log('Successfully generated 6 fixtures in test-assets/');
+  // 7. Computer Mouse / Durable Hardware (Non-perishable)
+  const f7 = createSvgLabel({
+    title: 'Optical USB Computer Mouse',
+    lines: [
+      'Category: Computer Hardware / Electronics',
+      'Model: M100 Ergonomic Optical Mouse',
+      'S/N: SN-MOU-990234',
+      'Note: Durable hardware - Expiration dates do not apply',
+    ],
+    badge: 'HARDWARE',
+    bg: '#F0F9FF',
+    borderColor: '#0284C7',
+  });
+  await sharp(f7).jpeg({ quality: 90 }).toFile(path.join(outDir, 'fixture-7-computer-mouse.jpg'));
+
+  // Also copy all fixtures to public/samples for 1-click in-browser testing
+  const publicSamplesDir = path.resolve(process.cwd(), 'public', 'samples');
+  if (!fs.existsSync(publicSamplesDir)) {
+    fs.mkdirSync(publicSamplesDir, { recursive: true });
+  }
+  const allFiles = fs.readdirSync(outDir);
+  for (const f of allFiles) {
+    fs.copyFileSync(path.join(outDir, f), path.join(publicSamplesDir, f));
+  }
+
+  console.log('Successfully generated 7 fixtures in test-assets/ and copied to public/samples/');
 }
 
 generate().catch(console.error);
