@@ -41,12 +41,12 @@ export function ProvenanceChip({ provenance }) {
         onClick={() => setShowPopover(!showPopover)}
         onMouseEnter={() => setShowPopover(true)}
         onMouseLeave={() => setShowPopover(false)}
-        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[11px] font-bold tracking-tight transition-colors ${info.color} cursor-help whitespace-nowrap`}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-bold tracking-tight transition-all ${info.color} cursor-help shadow-2xs`}
         aria-label={`Provenance: ${info.label}`}
       >
-        <span className="text-[9px] uppercase font-semibold opacity-70">PROV:</span>
-        <span>{info.label}</span>
-        <Info className="w-3 h-3 opacity-60" />
+        <span className="text-[9px] uppercase font-bold opacity-60">PROV:</span>
+        <span className="font-semibold">{info.label}</span>
+        <Info className="w-3 h-3 opacity-60 shrink-0" />
       </button>
 
       {showPopover && (

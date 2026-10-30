@@ -218,18 +218,18 @@ export function ScannerStep1Upload({
           <button
             type="button"
             onClick={() => cameraInputRef.current?.click()}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all active:scale-95 min-h-[48px]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-full text-xs sm:text-sm font-semibold shadow-xs hover:shadow transition-all active:scale-95 min-h-[44px]"
           >
-            <Camera className="w-5 h-5" />
+            <Camera className="w-4 h-4 text-indigo-400" />
             Open Camera
           </button>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-sm font-semibold shadow-xs transition-colors active:scale-95 min-h-[48px]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-full text-xs sm:text-sm font-semibold shadow-2xs transition-all active:scale-95 min-h-[44px]"
           >
             <Upload className="w-4 h-4 text-slate-500" />
-            Choose Files
+            Choose Photos
           </button>
         </div>
 
