@@ -72,28 +72,32 @@ export default withErrors(async (req, res) => {
 
     contents.push({ role: 'user', parts: [{ text: queryText }] });
 
-    const modelsToTry = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash'];
-    let replyText = null;
-
-    for (const model of modelsToTry) {
-      try {
-        const response = await ai.models.generateContent({
-          model,
-          contents,
-          config: {
-            systemInstruction: SYSTEM_PROMPT_CHATBOT,
-            temperature: 0.3,
-            maxOutputTokens: 800,
-          },
-        });
-        if (response?.text) {
-          replyText = response.text;
-          break;
+    const callPromise = (async () => {
+      const modelsToTry = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash'];
+      for (const model of modelsToTry) {
+        try {
+          const response = await ai.models.generateContent({
+            model,
+            contents,
+            config: {
+              systemInstruction: SYSTEM_PROMPT_CHATBOT,
+              temperature: 0.3,
+              maxOutputTokens: 600,
+            },
+          });
+          if (response?.text) return response.text;
+        } catch {
+          // fallback to next model
         }
-      } catch (err) {
-        // Try fallback model
       }
-    }
+      return null;
+    })();
+
+    const timeoutPromise = new Promise((resolve) =>
+      setTimeout(() => resolve(null), 6000)
+    );
+
+    let replyText = await Promise.race([callPromise, timeoutPromise]);
 
     if (!replyText) {
       replyText = getOfflineFaqResponse(queryText);
