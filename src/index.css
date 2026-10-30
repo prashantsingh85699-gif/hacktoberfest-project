@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0B1F33;
+  --color-ink-muted: #4B5563;
+  --color-surface: #F7F8FB;
+  --color-surface-subtle: #EDF0F5;
+  --color-border-card: #E5E7EF;
+  
+  --color-primary-50: #EEF2FF;
+  --color-primary-100: #E0E7FF;
+  --color-primary-500: #6366F1;
+  --color-primary-600: #4F46E5;
+  --color-primary-700: #4338CA;
+  
+  /* Status Colors */
+  --color-status-green: #10B981;
+  --color-status-green-bg: #ECFDF5;
+  --color-status-green-border: #A7F3D0;
+  
+  --color-status-blue: #3B82F6;
+  --color-status-blue-bg: #EFF6FF;
+  --color-status-blue-border: #BFDBFE;
+  
+  --color-status-slate: #64748B;
+  --color-status-slate-bg: #F8FAFC;
+  --color-status-slate-border: #E2E8F0;
+  
+  --color-status-amber: #F59E0B;
+  --color-status-amber-bg: #FFFBEB;
+  --color-status-amber-border: #FDE68A;
+  
+  --color-status-red: #EF4444;
+  --color-status-red-bg: #FEF2F2;
+  --color-status-red-border: #FECACA;
+  
+  --color-status-violet: #8B5CF6;
+  --color-status-violet-bg: #F5F3FF;
+  --color-status-violet-border: #DDD6FE;
+
+  --font-heading: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+
+  --radius-card: 12px;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

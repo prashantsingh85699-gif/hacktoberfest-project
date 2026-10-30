@@ -1,0 +1,224 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
+import { toast } from 'sonner';
+import { ArrowLeft, Trash2, Camera, Download, AlertTriangle, ShieldCheck, Tag } from 'lucide-react';
+import { getScanRecord, saveScanRecord, deleteScanRecord } from '../lib/history.js';
+import { postInvestigate } from '../lib/api.js';
+import { assess } from '../../shared/assess.js';
+import { StatusBadge } from '../components/ui/StatusBadge.jsx';
+import { ExpiryCard } from '../components/result/ExpiryCard.jsx';
+import { DamageOverlay } from '../components/result/DamageOverlay.jsx';
+import { InvestigationAccordion } from '../components/result/InvestigationAccordion.jsx';
+import { RecommendationsCard } from '../components/result/RecommendationsCard.jsx';
+import { ContactCareCard } from '../components/result/ContactCareCard.jsx';
+import { formatIsoDate } from '../lib/format.js';
+
+export function Result() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [record, setRecord] = useState(location.state?.record || null);
+  const [loading, setLoading] = useState(!record);
+  const [isInvestigating, setIsInvestigating] = useState(false);
+
+  useEffect(() => {
+    if (!record && id) {
+      getScanRecord(id).then((saved) => {
+        if (saved) {
+          setRecord(saved);
+        } else {
+          toast.error('Scan record not found in history.');
+          navigate('/history');
+        }
+        setLoading(false);
+      });
+    }
+  }, [id, record, navigate]);
+
+  const handleTriggerInvestigation = async () => {
+    if (!record) return;
+    setIsInvestigating(true);
+
+    try {
+      const barcodeVal = record.extraction?.barcodes?.[0]?.value || null;
+      const batchVal = record.extraction?.batchNumbers?.[0]?.value || null;
+
+      const response = await postInvestigate({
+        identity: record.extraction.product,
+        barcode: barcodeVal,
+        batchNumber: batchVal,
+      });
+
+      const updatedInvestigation = response.investigation;
+
+      // Re-assess with investigation conclusion
+      const reassessment = assess({
+        extraction: record.extraction,
+        investigation: updatedInvestigation,
+        userOverrides: {},
+      });
+
+      const updatedRecord = {
+        ...record,
+        investigation: updatedInvestigation,
+        assessment: reassessment,
+      };
+
+      await saveScanRecord(updatedRecord);
+      setRecord(updatedRecord);
+      toast.success('Investigation completed and findings evaluated.');
+    } catch (err) {
+      console.error('Investigation error:', err);
+      toast.error(err.message || 'Failed to complete manufacturer investigation.');
+    } finally {
+      setIsInvestigating(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete this scan from history?')) return;
+    await deleteScanRecord(record.id);
+    toast.success('Scan removed from history.');
+    navigate('/history');
+  };
+
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto py-16 px-4 text-center">
+        <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+        <p className="text-sm text-slate-600">Loading inspection findings...</p>
+      </div>
+    );
+  }
+
+  if (!record) return null;
+
+  const { product, dates, batchNumbers, damage, customerContact, barcodes } = record.extraction || {};
+  const assessment = record.assessment || {};
+  const isDemo = record.meta?.source === 'demo' || record.investigation?.isDemo;
+
+  return (
+    <div className="max-w-4xl mx-auto py-6 sm:py-10 px-4 space-y-6">
+      {/* Top Bar Actions */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#E5E7EF]">
+        <Link
+          to="/scan"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Scanner
+        </Link>
+
+        <div className="flex items-center gap-2">
+          <Link
+            to="/scan"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-xs font-semibold transition-colors"
+          >
+            <Camera className="w-3.5 h-3.5" />
+            Inspect Another Product
+          </Link>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-medium transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Delete
+          </button>
+        </div>
+      </div>
+
+      {/* Demo Banner */}
+      {isDemo && (
+        <div className="bg-amber-500 text-slate-950 px-4 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm">
+          <AlertTriangle className="w-4 h-4 text-slate-950 shrink-0" />
+          <span>DEMO DATA: not read from your photo (running in canned demo verification mode)</span>
+        </div>
+      )}
+
+      {/* Primary Status Banner */}
+      <div className="bg-white border border-[#E5E7EF] rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 block mb-1">
+            Inspection Primary Status
+          </span>
+          <StatusBadge status={assessment.primaryStatus} size="lg" />
+        </div>
+
+        <div className="text-right sm:max-w-xs">
+          <span className="text-xs text-slate-500 block">Inspected at</span>
+          <span className="text-xs font-mono font-medium text-slate-800">
+            {new Date(record.savedAt).toLocaleString()}
+          </span>
+        </div>
+      </div>
+
+      {/* Core Expiry Assessment Card */}
+      <ExpiryCard
+        expiry={assessment.expiry || {}}
+        expiryState={assessment.expiryState}
+        unknownMessage={assessment.unknownMessage}
+      />
+
+      {/* Product Identity Card */}
+      <div className="bg-white border border-[#E5E7EF] rounded-2xl p-5 shadow-xs space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="font-heading font-semibold text-sm text-[#0B1F33]">
+            Product Identity
+          </h4>
+          <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
+            Confidence: {((product?.identityConfidence || 0.5) * 100).toFixed(0)}%
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div className="p-2.5 bg-slate-50 rounded-lg">
+            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Name</span>
+            <span className="font-semibold text-slate-900">{product?.name || 'N/A'}</span>
+          </div>
+
+          <div className="p-2.5 bg-slate-50 rounded-lg">
+            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Brand</span>
+            <span className="font-semibold text-slate-900">{product?.brand || 'N/A'}</span>
+          </div>
+
+          <div className="p-2.5 bg-slate-50 rounded-lg">
+            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Category</span>
+            <span className="font-semibold text-slate-900 capitalize">{product?.category || 'Food'}</span>
+          </div>
+
+          <div className="p-2.5 bg-slate-50 rounded-lg">
+            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Batch / LOT</span>
+            <span className="font-mono font-semibold text-slate-900">{batchNumbers?.[0]?.value || 'N/A'}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Packaging Damage Overlays */}
+      <DamageOverlay
+        images={record.images || []}
+        findings={damage?.findings || []}
+      />
+
+      {/* Manufacturer Investigation Accordion */}
+      <InvestigationAccordion
+        investigation={record.investigation}
+        onTriggerInvestigation={handleTriggerInvestigation}
+        isInvestigating={isInvestigating}
+      />
+
+      {/* Category Recommendations & Safety Guidance */}
+      <RecommendationsCard
+        recommendation={assessment.recommendation}
+      />
+
+      {/* Contact Care Details & Email Draft */}
+      <ContactCareCard
+        contact={customerContact || {}}
+        product={product || {}}
+        batch={batchNumbers?.[0]?.value || ''}
+      />
+    </div>
+  );
+}

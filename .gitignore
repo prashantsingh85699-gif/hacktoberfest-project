@@ -1,0 +1,31 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Dependencies & Build
+node_modules/
+dist/
+dist-ssr/
+.vercel/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Test assets generated images
+test-assets/*.jpg
+test-assets/*.png
+test-assets/*.webp
+
+# System files & IDEs
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.local
