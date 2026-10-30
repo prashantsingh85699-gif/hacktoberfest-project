@@ -9,37 +9,37 @@ export function Home() {
   return (
     <div className="space-y-16 py-8 sm:py-12">
       {/* Hero Section */}
-      <section className="text-center max-w-4xl mx-auto px-4 space-y-6">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold">
-          <ShieldCheck className="w-4 h-4" />
-          The Honesty Contract: Deterministic date logic. Zero date hallucinations.
+      <section className="text-center max-w-4xl mx-auto px-4 space-y-6 pt-2 sm:pt-6">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50/80 border border-indigo-200/80 text-indigo-700 text-xs sm:text-sm font-semibold shadow-xs">
+          <ShieldCheck className="w-4 h-4 text-indigo-600" />
+          The Honesty Contract: Zero hallucinated dates. Real verification only.
         </div>
 
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#0B1F33] tracking-tight leading-tight">
-          Check what the label <br className="hidden sm:inline" />
-          <span className="text-indigo-600 bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">
-            can't tell you.
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#0B1F33] tracking-tight leading-[1.15]">
+          Inspect product packaging <br className="hidden sm:inline" />
+          <span className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-800 bg-clip-text text-transparent">
+            with honest AI vision.
           </span>
         </h1>
 
-        <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-          Smart packaging inspector for food, medicine, and cosmetics. Reads printed dates with OCR + Gemini vision, detects physical defects, and investigates verified manufacturer records when dates are missing.
+        <p className="text-sm sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          Smart inspector for food, medicine, and cosmetics. Accurately identifies non-perishable goods (like computer hardware), detects physical packaging defects, and verifies manufacturer records.
         </p>
 
-        <div className="flex flex-wrap justify-center gap-4 pt-2">
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-3.5 pt-2 max-w-md mx-auto">
           <Link
             to="/scan"
-            className="inline-flex items-center gap-2 px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm shadow-md hover:shadow-lg transition-all min-h-[44px]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-2xl font-bold text-sm shadow-md hover:shadow-xl transition-all active:scale-95 min-h-[48px]"
           >
-            <Camera className="w-4 h-4" />
+            <Camera className="w-5 h-5" />
             Inspect a Product Now
             <ArrowRight className="w-4 h-4 ml-1" />
           </Link>
           <Link
             to="/how-it-works"
-            className="inline-flex items-center gap-2 px-5 py-3.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl font-medium text-sm transition-colors min-h-[44px]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-2xl font-semibold text-sm transition-colors min-h-[48px] shadow-xs"
           >
-            How It Works & Truth Ladder
+            Truth Ladder & Rules
           </Link>
         </div>
       </section>
@@ -185,3 +185,4 @@ export function Home() {
     </div>
   );
 }
+

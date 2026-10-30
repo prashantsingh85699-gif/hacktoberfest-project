@@ -118,3 +118,4 @@ export function DamageOverlay({ images = [], findings = [] }) {
     </div>
   );
 }
+

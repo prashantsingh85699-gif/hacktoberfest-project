@@ -87,22 +87,22 @@ export function ScannerStep1Upload({
         </p>
 
         {/* Action Buttons */}
-        <div className="mt-5 flex flex-wrap justify-center gap-3">
+        <div className="mt-5 flex flex-col sm:flex-row justify-center gap-3 max-w-sm mx-auto">
           <button
             type="button"
             onClick={() => cameraInputRef.current?.click()}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold shadow-xs min-h-[44px] transition-colors"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all active:scale-95 min-h-[48px]"
           >
-            <Camera className="w-4 h-4" />
-            Take Photo
+            <Camera className="w-5 h-5" />
+            Open Camera
           </button>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-sm font-medium shadow-xs min-h-[44px] transition-colors"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-sm font-semibold shadow-xs transition-colors active:scale-95 min-h-[48px]"
           >
-            <Upload className="w-4 h-4" />
-            Browse Files
+            <Upload className="w-4 h-4 text-slate-500" />
+            Choose Photos
           </button>
         </div>
 
@@ -213,6 +213,7 @@ export function ScannerStep1Upload({
               <option value="food">Food & Beverage</option>
               <option value="medicine">Medicine / Pharmaceutical</option>
               <option value="cosmetic">Cosmetics & Personal Care</option>
+              <option value="electronics">Electronics / Hardware (Non-perishable)</option>
             </select>
           </div>
 
@@ -269,3 +270,4 @@ export function ScannerStep1Upload({
     </div>
   );
 }
+

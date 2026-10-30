@@ -68,3 +68,4 @@ export async function lookupBarcodeIdentity(barcode, category = 'food') {
   cache.set(barcode, null);
   return null;
 }
+

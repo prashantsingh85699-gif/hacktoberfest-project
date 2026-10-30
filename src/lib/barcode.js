@@ -53,3 +53,4 @@ export async function detectBarcodesFromCanvas(canvas) {
 
   return results;
 }
+

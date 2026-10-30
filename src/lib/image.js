@@ -62,3 +62,4 @@ export async function processImageFile(file, options = { maxDimension: 1600, max
     height,
   };
 }
+

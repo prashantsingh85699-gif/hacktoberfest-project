@@ -100,8 +100,17 @@ export function getRecommendations({
     return { headline, details, doNot, disclaimer: SAFETY_DISCLAIMER };
   }
 
+  if (category === CATEGORIES.ELECTRONICS || category === 'hardware') {
+    headline = 'Non-perishable electronic / durable hardware';
+    details.push('Electronics do not have an expiration date.');
+    details.push('Check manufacturer warranty period and serial number instead of expiry.');
+    details.push('Inspect cables, buttons, USB connectors, and packaging seals for physical damage.');
+    return { headline, details, doNot, disclaimer: SAFETY_DISCLAIMER };
+  }
+
   // Default OTHER category
   headline = expiryState === EXPIRY_STATE.EXPIRED ? 'Expired product' : 'Product status assessed';
   details.push(expiryState === EXPIRY_STATE.EXPIRED ? 'Product is past its printed expiration date.' : NO_PROBLEM_FOUND_MESSAGE);
   return { headline, details, doNot, disclaimer: SAFETY_DISCLAIMER };
 }
+

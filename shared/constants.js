@@ -85,8 +85,14 @@ export const CATEGORIES = {
   FOOD: 'food',
   MEDICINE: 'medicine',
   COSMETIC: 'cosmetic',
+  ELECTRONICS: 'electronics',
   OTHER: 'other',
 };
+
+export const NON_PERISHABLE_CATEGORIES = new Set(['electronics', 'hardware', 'durable', 'apparel', 'stationery']);
+
+export const EXACT_NON_PERISHABLE_MESSAGE =
+  'This is a non-perishable durable item (such as computer hardware/electronics). Expiration dates do not apply to this product category.';
 
 export const DATE_KINDS = {
   MFG: 'MFG',
@@ -113,3 +119,4 @@ export const SAFETY_DISCLAIMER =
 
 export const NO_PROBLEM_FOUND_MESSAGE =
   'No expiry problem found on the printed date. This does not guarantee safety.';
+

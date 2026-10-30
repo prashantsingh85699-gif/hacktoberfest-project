@@ -38,3 +38,4 @@ export async function postInvestigate(payload) {
   }
   return data;
 }
+

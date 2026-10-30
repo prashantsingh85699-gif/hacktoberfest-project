@@ -58,3 +58,4 @@ export function parseLabelRule(rawText) {
 
   return null;
 }
+

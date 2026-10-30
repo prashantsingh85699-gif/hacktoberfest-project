@@ -4,7 +4,8 @@ import { HttpError } from './http.js';
 const SYSTEM_PROMPT_SCAN = `You read packaged-product labels and inspect packaging from photos. Return ONLY the JSON defined by the schema.
 - Transcribe only what is visibly printed. Copy dates, batch numbers and label rules EXACTLY as printed in rawText (keep separators and letters). If something is not visible, leave the array empty. Never guess, infer, compute, or "complete" a date. Never derive a date from the product type.
 - Do not decide whether a date is valid or expired. Do not convert formats. Another system does that.
-- Classify category: food, medicine (tablets, capsules, syrups, ointments, injections, OTC drugs), cosmetic (skin, hair, makeup, personal care), or other.
+- Classify category: food, medicine (tablets, capsules, syrups, ointments, injections, OTC drugs), cosmetic (skin, hair, makeup, personal care), electronics (computer mouse, keyboard, cables, gadgets, hardware), or other.
+- Non-perishable hardware: If the inspected item is a computer mouse, electronics, hardware, tool, or durable non-perishable item, mark category: "electronics", set isNonPerishable: true, and note that durable electronics do not have an expiration date. Never invent an expiry date for non-perishable items.
 - Identify brand, product name, variant, strength/dosage form, manufacturer, net quantity from printed text. Set identityConfidence honestly; lower it if text is partial, glared, or from only one angle.
 - If an open-jar PAO symbol with a number and M (for example 12M) is visible, record it.
 - Record label rules such as "Best before 9 months from the date of manufacture" with their base (manufacture/packing/opening).
@@ -153,3 +154,4 @@ export async function extractEvidenceWithGemini(identity, sources) {
     }
   }
 }
+

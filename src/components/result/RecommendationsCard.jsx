@@ -54,3 +54,4 @@ export function RecommendationsCard({ recommendation }) {
     </div>
   );
 }
+

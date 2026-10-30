@@ -29,3 +29,4 @@ app.listen(port, () => {
   console.log(`[ExpiryWatch AI Dev Server] AI Mode: ${process.env.GEMINI_API_KEY ? 'LIVE (Gemini)' : 'DEMO (Canned Data)'}`);
   console.log(`[ExpiryWatch AI Dev Server] Search Mode: ${process.env.TAVILY_API_KEY ? 'LIVE (Tavily)' : 'UNAVAILABLE / DEMO'}`);
 });
+

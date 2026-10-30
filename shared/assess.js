@@ -5,6 +5,8 @@ import {
   CATEGORIES,
   CRITICAL_DAMAGE_TYPES,
   EXACT_UNKNOWN_MESSAGE,
+  EXACT_NON_PERISHABLE_MESSAGE,
+  NON_PERISHABLE_CATEGORIES,
 } from './constants.js';
 import { calculateExpiryFromMfg, calculatePaoDiscardDate, getEarlierDate, getExpiryState } from './dateMath.js';
 import { getRecommendations } from './recommendations.js';
@@ -111,7 +113,29 @@ export function assess({
   // 1. Rule: MANUAL_INSPECTION_REQUIRED
   const isOtherWithNoDate = product.category === CATEGORIES.OTHER && !confirmedExp && !unconfirmedOrAmbiguousExp;
   const isImageBlocked = severeQualityIssues.length > 0 && dates.length === 0;
-  if (product.packagingType === 'unsupported' || isOtherWithNoDate || isImageBlocked) {
+  
+  const isNonPerishable =
+    NON_PERISHABLE_CATEGORIES.has(product.category) ||
+    product.isNonPerishable ||
+    /mouse|keyboard|usb|cable|charger|monitor|headphone|electronics|hardware|laptop|adapter|gadget/i.test(product.name || '') ||
+    /mouse|keyboard|electronics|hardware/i.test(product.variant || '');
+
+  if (isNonPerishable) {
+    primaryStatus = PRIMARY_STATUS.EXPIRY_NOT_FOUND;
+    expiry = {
+      iso: null,
+      precision: null,
+      provenance: PROVENANCE.UNKNOWN,
+      basisText: 'Non-perishable durable goods do not have an expiration date.',
+      formulaText: null,
+      sourceIds: [],
+    };
+    unknownMessage = EXACT_NON_PERISHABLE_MESSAGE;
+    flags.push({
+      type: 'NON_PERISHABLE_ITEM',
+      message: 'Non-perishable hardware detected. Computer peripherals and electronics do not expire under normal storage.',
+    });
+  } else if (product.packagingType === 'unsupported' || isOtherWithNoDate || isImageBlocked) {
     primaryStatus = PRIMARY_STATUS.MANUAL_INSPECTION_REQUIRED;
     flags.push({
       type: 'MANUAL_INSPECTION',

@@ -60,3 +60,4 @@ export function exportHistoryAsJson(records = []) {
   downloadAnchor.click();
   downloadAnchor.remove();
 }
+

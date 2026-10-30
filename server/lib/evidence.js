@@ -208,3 +208,4 @@ export function deriveConclusion(verifiedClaims = []) {
     quote: top.quote,
   };
 }
+

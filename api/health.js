@@ -21,3 +21,4 @@ export default withErrors(async (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+

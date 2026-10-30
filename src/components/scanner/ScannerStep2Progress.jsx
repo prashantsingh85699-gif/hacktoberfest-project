@@ -71,3 +71,4 @@ export function ScannerStep2Progress({ currentStage, onCancel }) {
     </div>
   );
 }
+

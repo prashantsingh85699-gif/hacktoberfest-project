@@ -166,6 +166,7 @@ export function ScannerStep3Confirm({
               <option value="food">Food & Beverage</option>
               <option value="medicine">Medicine / Pharma</option>
               <option value="cosmetic">Cosmetics & Personal Care</option>
+              <option value="electronics">Electronics / Hardware</option>
               <option value="other">Other</option>
             </select>
           </div>
@@ -330,3 +331,4 @@ export function ScannerStep3Confirm({
     </div>
   );
 }
+

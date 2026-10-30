@@ -2,6 +2,55 @@ export function getDemoScanFixture(hints = {}) {
   const categoryHint = (hints.category || '').toLowerCase();
   const productHint = (hints.productHint || '').toLowerCase();
 
+  // Scenario 4: Computer Mouse / Electronics / Durable Non-Perishable Goods
+  if (
+    categoryHint === 'electronics' ||
+    productHint.includes('mouse') ||
+    productHint.includes('keyboard') ||
+    productHint.includes('computer') ||
+    productHint.includes('electronic') ||
+    productHint.includes('hardware') ||
+    productHint.includes('charger') ||
+    productHint.includes('usb')
+  ) {
+    return {
+      product: {
+        category: 'electronics',
+        categoryConfidence: 0.99,
+        name: 'Optical USB Computer Mouse (Durable Hardware)',
+        brand: 'LogiTech DemoDevice',
+        manufacturer: 'Demo Peripherals Corp',
+        variant: 'Ergonomic USB Optical',
+        strength: '',
+        dosageForm: '',
+        netQuantity: '1 Unit',
+        packagingType: 'carton_blister',
+        isNonPerishable: true,
+        identityConfidence: 0.98,
+        identityEvidence: 'Packaging shows Optical Computer Mouse, USB-A cable, and model identifier.',
+      },
+      dates: [],
+      labelRules: [],
+      batchNumbers: [
+        { labelText: 'S/N', value: 'SN-MOU-990234', imageIndex: 0, confidence: 0.9 },
+      ],
+      damage: {
+        assessed: true,
+        findings: [],
+        limitations: 'Physical packaging is intact. Electronic internal circuitry cannot be tested from photos.',
+      },
+      imageQuality: [],
+      storageInstructions: 'Keep dry. Avoid extreme temperatures and liquid exposure.',
+      customerContact: {
+        phone: '1800-DEMO-SUPPORT',
+        email: 'hardware-support@example.com',
+        website: 'https://example.com/demo-mouse',
+      },
+      isDemo: true,
+      demoScenario: 'mouse_non_perishable',
+    };
+  }
+
   // Scenario 3: Medicine with unreadable expiry -> ends in UNKNOWN
   if (categoryHint === 'medicine' || productHint.includes('med') || productHint.includes('pharma') || productHint.includes('pill')) {
     return {
@@ -182,6 +231,44 @@ export function getDemoInvestigationFixture(identity = {}) {
   const brand = (identity.brand || '').toLowerCase();
   const category = (identity.category || '').toLowerCase();
 
+  if (category === 'electronics' || (identity.name || '').toLowerCase().includes('mouse')) {
+    return {
+      ran: true,
+      status: 'DONE',
+      isDemo: true,
+      queries: [`"${identity.brand || 'Hardware'}" "${identity.name || 'Mouse'}" warranty specifications`],
+      identityLookup: null,
+      sources: [
+        {
+          id: 's-demo-hardware',
+          url: 'https://example.com/demo/mouse-warranty',
+          title: 'Official Hardware Warranty Policy',
+          domain: 'example.com',
+          class: 'MANUFACTURER',
+          eligible: true,
+          reason: 'Hardware manufacturer support portal.',
+        },
+      ],
+      claims: [
+        {
+          sourceId: 's-demo-hardware',
+          type: 'storage',
+          quote: 'Durable hardware product with 2-year limited manufacturer warranty',
+          value: null,
+          unit: null,
+          accepted: false,
+          rejectReason: 'Durable hardware: Expiration dates do not apply. Warranty period only.',
+        },
+      ],
+      conclusion: {
+        type: 'NONE',
+        sourceId: null,
+        quote: null,
+      },
+      creditsUsed: 1,
+    };
+  }
+
   if (category === 'medicine') {
     return {
       ran: true,
@@ -281,3 +368,4 @@ export function getDemoInvestigationFixture(identity = {}) {
     creditsUsed: 2,
   };
 }
+

@@ -243,6 +243,22 @@ test('assess: PAO calculation computes discard date correctly', () => {
   assert.equal(res.effectiveDiscardBy, '2027-05-14'); // Earlier than 2027-12-30
 });
 
+test('assess: computer mouse and non-perishables refuse expiry and flag non-perishable', () => {
+  const res = assess({
+    extraction: {
+      product: {
+        category: 'electronics',
+        name: 'Optical USB Computer Mouse',
+        isNonPerishable: true,
+      },
+      dates: [],
+    },
+  });
+  assert.equal(res.primaryStatus, PRIMARY_STATUS.EXPIRY_NOT_FOUND);
+  assert.equal(res.expiry.provenance, PROVENANCE.UNKNOWN);
+  assert.match(res.unknownMessage, /non-perishable durable item/i);
+});
+
 test('assess: medicine with unreadable expiry refuses to estimate without regulator/mfg', () => {
   const res = assess({
     extraction: {

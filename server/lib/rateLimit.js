@@ -25,3 +25,4 @@ export function checkRateLimit(ip = '127.0.0.1', endpoint = 'general', maxPerMin
   ipHits.set(key, timestamps);
   return true;
 }
+

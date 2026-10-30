@@ -137,7 +137,7 @@ export function normalizeExtraction(rawJson, validatedInput) {
   // Product identity
   const rawProduct = data.product || {};
   const product = {
-    category: ['food', 'medicine', 'cosmetic', 'other'].includes(rawProduct.category) ? rawProduct.category : 'other',
+    category: ['food', 'medicine', 'cosmetic', 'electronics', 'other'].includes(rawProduct.category) ? rawProduct.category : 'other',
     categoryConfidence: typeof rawProduct.categoryConfidence === 'number' ? Math.min(1, Math.max(0, rawProduct.categoryConfidence)) : 0.5,
     name: String(rawProduct.name || 'Unknown Product').slice(0, 200).trim(),
     brand: String(rawProduct.brand || '').slice(0, 100).trim(),
@@ -147,6 +147,7 @@ export function normalizeExtraction(rawJson, validatedInput) {
     dosageForm: String(rawProduct.dosageForm || '').slice(0, 80).trim(),
     netQuantity: String(rawProduct.netQuantity || '').slice(0, 50).trim(),
     packagingType: String(rawProduct.packagingType || 'package').slice(0, 50).trim(),
+    isNonPerishable: !!rawProduct.isNonPerishable,
     identityConfidence: typeof rawProduct.identityConfidence === 'number' ? Math.min(1, Math.max(0, rawProduct.identityConfidence)) : 0.5,
     identityEvidence: String(rawProduct.identityEvidence || '').slice(0, 300).trim(),
   };
@@ -249,3 +250,4 @@ export function normalizeExtraction(rawJson, validatedInput) {
     ocr: validatedInput.ocr || [],
   };
 }
+

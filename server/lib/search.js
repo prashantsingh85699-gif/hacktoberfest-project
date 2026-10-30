@@ -54,3 +54,4 @@ export async function executeTavilySearch({ query, depth = 'basic', maxResults =
     return { error: 'SEARCH_TIMEOUT', results: [], creditsUsed: 0 };
   }
 }
+
