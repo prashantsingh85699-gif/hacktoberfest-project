@@ -5,6 +5,7 @@ import { extractWithGemini } from '../server/lib/gemini.js';
 import { getDemoScanFixture } from '../server/lib/demoFixtures.js';
 import { reconcileAiAndOcrDates, extractDateCandidatesFromOcr } from '../shared/agreement.js';
 import { assess } from '../shared/assess.js';
+import { lookupBarcodeIdentity } from '../server/lib/offLookup.js';
 
 export default withErrors(async (req, res) => {
   if (req.method !== 'POST') {
@@ -43,6 +44,37 @@ export default withErrors(async (req, res) => {
 
   // Reconcile dates between AI and OCR
   extraction.dates = reconcileAiAndOcrDates(extraction.dates, allOcrCandidates);
+
+  // Automatic barcode identity corroboration
+  const foundBarcode =
+    extraction.barcodes?.[0]?.value ||
+    validatedInput.barcodes?.[0]?.value ||
+    extractionRaw?.barcode ||
+    allOcrCandidates.find((c) => /^\d{8,14}$/.test(c)) ||
+    null;
+
+  if (foundBarcode) {
+    if (!extraction.barcodes || extraction.barcodes.length === 0) {
+      extraction.barcodes = [{ format: 'EAN_13', value: foundBarcode }];
+    }
+    try {
+      const barcodeData = await lookupBarcodeIdentity(foundBarcode, extraction.product?.category);
+      if (barcodeData && barcodeData.found) {
+        if (!extraction.product.name || extraction.product.name === 'Unknown Product') {
+          extraction.product.name = barcodeData.name || extraction.product.name;
+        }
+        if (!extraction.product.brand) {
+          extraction.product.brand = barcodeData.brand || extraction.product.brand;
+        }
+        if (extraction.product.category === 'other' || !extraction.product.category) {
+          extraction.product.category = 'food';
+        }
+        extraction.product.identityConfidence = Math.max(0.85, extraction.product.identityConfidence || 0.5);
+      }
+    } catch {
+      // Barcode lookup is optional network enrichment
+    }
+  }
 
   // Compute assessment
   const assessment = assess({

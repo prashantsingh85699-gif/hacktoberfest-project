@@ -232,12 +232,19 @@ export function normalizeExtraction(rawJson, validatedInput) {
       }))
     : [];
 
+  const combinedBarcodes = [...(validatedInput.barcodes || [])];
+  if (data.barcode && typeof data.barcode === 'string' && /^\d{8,14}$/.test(data.barcode.trim())) {
+    if (!combinedBarcodes.some((b) => b.value === data.barcode.trim())) {
+      combinedBarcodes.push({ format: 'EAN_13', value: data.barcode.trim() });
+    }
+  }
+
   return {
     product,
     dates,
     labelRules,
     batchNumbers,
-    barcodes: validatedInput.barcodes || [],
+    barcodes: combinedBarcodes,
     pao,
     storageInstructions: String(data.storageInstructions || '').slice(0, 200),
     customerContact: {
