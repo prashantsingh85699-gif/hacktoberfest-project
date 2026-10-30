@@ -11,17 +11,17 @@ export function withErrors(handler) {
     try {
       await handler(req, res);
     } catch (err) {
-      if (err instanceof HttpError) {
-        return res.status(err.status).json({
+      if (err instanceof HttpError || (err.status && err.code)) {
+        return res.status(err.status || 400).json({
           error: {
-            code: err.code,
+            code: err.code || 'BAD_REQUEST',
             message: err.message,
           },
         });
       }
 
       // Safe generic error - never leak internal stack, keys or tokens
-      console.error('Unhandled server error:', err.message);
+      console.error('Unhandled server error:', err?.message || err);
       return res.status(500).json({
         error: {
           code: 'INTERNAL_ERROR',

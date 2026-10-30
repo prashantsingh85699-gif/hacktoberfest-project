@@ -32,10 +32,19 @@ export default withErrors(async (req, res) => {
     throw new HttpError(429, 'RATE_LIMIT_EXCEEDED', 'Too many questions in a short time. Please wait a few seconds.');
   }
 
-  const { message, history = [] } = req.body || {};
-  if (!message || typeof message !== 'string' || message.trim().length === 0) {
-    throw new HttpError(400, 'INVALID_INPUT', 'Message is required.');
+  let body = req.body;
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      body = {};
+    }
   }
+
+  const { message = 'How do I use ExpiryWatch?', history = [] } = body || {};
+  const queryText = (typeof message === 'string' && message.trim().length > 0)
+    ? message.trim()
+    : 'How do I inspect a product?';
 
   const apiKey = process.env.GEMINI_API_KEY;
 
@@ -61,7 +70,7 @@ export default withErrors(async (req, res) => {
       }
     }
 
-    contents.push({ role: 'user', parts: [{ text: message }] });
+    contents.push({ role: 'user', parts: [{ text: queryText }] });
 
     const modelsToTry = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash'];
     let replyText = null;
@@ -87,7 +96,7 @@ export default withErrors(async (req, res) => {
     }
 
     if (!replyText) {
-      replyText = getOfflineFaqResponse(message);
+      replyText = getOfflineFaqResponse(queryText);
     }
 
     return res.status(200).json({
