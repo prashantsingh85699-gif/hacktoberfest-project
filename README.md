@@ -1,5 +1,10 @@
 # ExpiryWatch AI: Smart Product Expiry & Packaging Inspector
 
+[![Live Production](https://img.shields.io/badge/Live%20Production-Vercel-success?style=for-the-badge&logo=vercel)](https://hacktoberfest-project-expirywatch.vercel.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+
+> 🌐 **Live Web Application:** **[https://hacktoberfest-project-expirywatch.vercel.app/](https://hacktoberfest-project-expirywatch.vercel.app/)**
+>
 > **The Honesty Contract:** ExpiryWatch AI **never invents an expiry date**. LLMs only transcribe printed text and extract verbatim quotes. All date parsing, arithmetic, and verification decisions are executed by deterministic code. Nothing in the UI will ever state that a product is "safe".
 
 ---
