@@ -2,7 +2,8 @@
   "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }],
   "functions": {
     "api/scan.js": { "maxDuration": 60 },
-    "api/investigate.js": { "maxDuration": 60 }
+    "api/investigate.js": { "maxDuration": 60 },
+    "api/chat.js": { "maxDuration": 60 }
   },
   "headers": [{
     "source": "/(.*)",
