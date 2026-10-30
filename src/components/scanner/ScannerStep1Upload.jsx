@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Camera, Upload, Trash2, HelpCircle, Shield, AlertCircle, Sparkles, CheckCircle2, ChevronDown, ChevronUp, Lightbulb } from 'lucide-react';
 import { processImageFile } from '../../lib/image.js';
+import { LiveCameraModal } from './LiveCameraModal.jsx';
 
 const ROLES = [
   { id: 'front', label: 'Front' },
@@ -70,8 +71,8 @@ export function ScannerStep1Upload({
   const [processing, setProcessing] = useState(false);
   const [loadingSample, setLoadingSample] = useState(null);
   const [showGuide, setShowGuide] = useState(false);
+  const [isLiveCameraOpen, setIsLiveCameraOpen] = useState(false);
   const fileInputRef = useRef(null);
-  const cameraInputRef = useRef(null);
 
   const handleFiles = async (fileList) => {
     setErrorMsg('');
@@ -218,7 +219,7 @@ export function ScannerStep1Upload({
         <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-sm mx-auto pt-1">
           <button
             type="button"
-            onClick={() => cameraInputRef.current?.click()}
+            onClick={() => setIsLiveCameraOpen(true)}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-full text-xs sm:text-sm font-semibold shadow-xs hover:shadow transition-all active:scale-95 min-h-[44px]"
           >
             <Camera className="w-4 h-4 text-indigo-400" />
@@ -234,19 +235,18 @@ export function ScannerStep1Upload({
           </button>
         </div>
 
-        {/* Hidden inputs */}
+        {/* Live Camera Viewfinder Modal */}
+        <LiveCameraModal
+          isOpen={isLiveCameraOpen}
+          onClose={() => setIsLiveCameraOpen(false)}
+          onCapturePhoto={(file) => handleFiles([file])}
+        />
+
+        {/* Hidden File Input */}
         <input
           ref={fileInputRef}
           type="file"
           multiple
-          accept="image/jpeg,image/png,image/webp"
-          className="hidden"
-          onChange={(e) => handleFiles(e.target.files)}
-        />
-        <input
-          ref={cameraInputRef}
-          type="file"
-          capture="environment"
           accept="image/jpeg,image/png,image/webp"
           className="hidden"
           onChange={(e) => handleFiles(e.target.files)}
