@@ -2,6 +2,7 @@ import express from 'express';
 import healthHandler from '../api/health.js';
 import scanHandler from '../api/scan.js';
 import investigateHandler from '../api/investigate.js';
+import chatHandler from '../api/chat.js';
 
 const app = express();
 const port = process.env.PORT || 8787;
@@ -23,6 +24,7 @@ function adaptHandler(handler) {
 app.get('/api/health', adaptHandler(healthHandler));
 app.post('/api/scan', adaptHandler(scanHandler));
 app.post('/api/investigate', adaptHandler(investigateHandler));
+app.post('/api/chat', adaptHandler(chatHandler));
 
 app.listen(port, () => {
   console.log(`[ExpiryWatch AI Dev Server] Listening on http://localhost:${port}`);

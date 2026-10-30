@@ -8,6 +8,7 @@ import '@fontsource-variable/plus-jakarta-sans';
 import { ErrorBoundary } from './components/layout/ErrorBoundary.jsx';
 import { Navbar } from './components/layout/Navbar.jsx';
 import { Footer } from './components/layout/Footer.jsx';
+import { HelpChatbot } from './components/chat/HelpChatbot.jsx';
 
 import { Home } from './pages/Home.jsx';
 import { Scanner } from './pages/Scanner.jsx';
@@ -36,6 +37,7 @@ export default function App() {
             </Routes>
           </main>
           <Footer />
+          <HelpChatbot />
         </div>
       </BrowserRouter>
     </ErrorBoundary>

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Camera, Upload, Trash2, HelpCircle, Shield, AlertCircle, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Camera, Upload, Trash2, HelpCircle, Shield, AlertCircle, Sparkles, CheckCircle2, ChevronDown, ChevronUp, Lightbulb } from 'lucide-react';
 import { processImageFile } from '../../lib/image.js';
 
 const ROLES = [
@@ -69,6 +69,7 @@ export function ScannerStep1Upload({
   const [errorMsg, setErrorMsg] = useState('');
   const [processing, setProcessing] = useState(false);
   const [loadingSample, setLoadingSample] = useState(null);
+  const [showGuide, setShowGuide] = useState(false);
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
 
@@ -258,6 +259,99 @@ export function ScannerStep1Upload({
           <div className="flex items-center justify-center gap-1.5 text-xs text-rose-600 font-medium">
             <AlertCircle className="w-4 h-4" />
             <span>{errorMsg}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Interactive Code Location & Photography Guide */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-2xs">
+        <button
+          type="button"
+          onClick={() => setShowGuide(!showGuide)}
+          className="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-slate-50/70 transition-colors"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+              <Lightbulb className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-slate-900 block">
+                Can't find the Expiry or Batch Code?
+              </span>
+              <span className="text-[11px] text-slate-500 block">
+                Click to view where manufacturers print dates on different packaging types
+              </span>
+            </div>
+          </div>
+          <div className="text-slate-400">
+            {showGuide ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </div>
+        </button>
+
+        {showGuide && (
+          <div className="px-5 pb-5 pt-2 border-t border-slate-100 space-y-3 bg-slate-50/40">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs">
+              <div className="p-3 bg-white rounded-xl border border-slate-200/80 space-y-1">
+                <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                  🥫 Cans & Tins
+                </span>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Turn upside down. Most food cans stamp date and batch on the bottom metal surface using black dot-matrix ink.
+                </p>
+              </div>
+
+              <div className="p-3 bg-white rounded-xl border border-slate-200/80 space-y-1">
+                <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                  💊 Medicine Blisters
+                </span>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Look at the crimped foil edge. Dates are usually embossed (stamped without ink). Tilt 45° to light to read clearly.
+                </p>
+              </div>
+
+              <div className="p-3 bg-white rounded-xl border border-slate-200/80 space-y-1">
+                <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                  🧴 Cosmetics & Tubes
+                </span>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Look at the sealed crimp at the top of the tube, or check for the open jar PAO logo (e.g. 6M, 12M).
+                </p>
+              </div>
+
+              <div className="p-3 bg-white rounded-xl border border-slate-200/80 space-y-1">
+                <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                  🥛 Tetra Paks & Cartons
+                </span>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Usually printed on the top fold, near the plastic screw cap or straw puncture hole.
+                </p>
+              </div>
+
+              <div className="p-3 bg-white rounded-xl border border-slate-200/80 space-y-1">
+                <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                  🏷️ Bottles & Jars
+                </span>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Look around the bottle neck or on the side of the plastic cap in yellow or black dotted laser print.
+                </p>
+              </div>
+
+              <div className="p-3 bg-white rounded-xl border border-slate-200/80 space-y-1">
+                <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                  💻 Hardware & Mouse
+                </span>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Electronics are non-perishable! Look for S/N (Serial Number) or Model No. for manufacturer warranty.
+                </p>
+              </div>
+            </div>
+
+            <div className="text-[11px] text-indigo-700 bg-indigo-50/70 p-2.5 rounded-xl border border-indigo-100 flex items-center gap-2">
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <span>
+                <strong>Pro-Tip:</strong> Take photos without flash to prevent white glare over shiny plastic or foil seals.
+              </span>
+            </div>
           </div>
         )}
       </div>
