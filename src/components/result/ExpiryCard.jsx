@@ -51,16 +51,33 @@ export function ExpiryCard({ expiry, expiryState, unknownMessage }) {
       </div>
 
       {isUnknown ? (
-        <div className="p-4 sm:p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+        <div
+          className={`p-4 sm:p-5 rounded-2xl border space-y-2 ${
+            unknownMessage?.toLowerCase().includes('undated') || unknownMessage?.toLowerCase().includes('invalid')
+              ? 'bg-amber-50/80 border-amber-300'
+              : 'bg-slate-50 border-slate-200'
+          }`}
+        >
           <div className="flex items-start gap-3 text-slate-800">
-            <AlertCircle className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
+            {unknownMessage?.toLowerCase().includes('undated') || unknownMessage?.toLowerCase().includes('invalid') ? (
+              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            ) : (
+              <AlertCircle className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
+            )}
             <div className="space-y-1">
+              {(unknownMessage?.toLowerCase().includes('undated') || unknownMessage?.toLowerCase().includes('invalid')) && (
+                <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300/80 mb-1">
+                  Invalid / Undated Packaging
+                </span>
+              )}
               <p className="font-semibold text-sm sm:text-base text-slate-900 leading-snug">
                 {unknownMessage || 'Expiry could not be reliably determined. Please contact the manufacturer or pharmacist.'}
               </p>
               <p className="text-xs text-slate-500 leading-relaxed">
                 {unknownMessage?.includes('non-perishable')
                   ? 'Computer peripherals, hardware, and durable electronics do not spoil or expire over time. Inspect physical cables and verify warranty coverage with the manufacturer.'
+                  : unknownMessage?.toLowerCase().includes('undated')
+                  ? 'Consumer safety standards require verifiable manufacturing or expiration markings. Consuming or using unverified undated perishables poses unverified health risks.'
                   : 'In accordance with our Honesty Contract, ExpiryWatch AI never guesses or fabricates expiration dates when packaging or verified records are inconclusive.'}
               </p>
             </div>

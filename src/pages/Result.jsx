@@ -154,6 +154,26 @@ export function Result() {
         </div>
       </div>
 
+      {/* Undated / Missing Baseline Date Warning Banner */}
+      {(assessment.isUndatedPackaging || assessment.flags?.some((f) => f.type === 'INVALID_UNDATED_PACKAGING')) && (
+        <div className="bg-amber-500/10 border-2 border-amber-400/80 rounded-2xl p-5 text-amber-950 flex items-start gap-3.5 shadow-2xs">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+            <AlertTriangle className="w-5 h-5" />
+          </div>
+          <div className="space-y-1">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-amber-800 bg-amber-200/80 px-2 py-0.5 rounded-full inline-block">
+              Invalid / Undated Packaging
+            </span>
+            <h4 className="font-heading font-bold text-sm sm:text-base text-slate-900">
+              No Manufacturing (MFG), Packing, or Expiration Date Found
+            </h4>
+            <p className="text-xs text-slate-700 leading-relaxed">
+              This product does not have any baseline start date (MFG/Packed date) or expiration marking visible on the packaging. Under consumer safety standards, consuming unverified undated perishable goods is unsafe.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Core Expiry Assessment Card */}
       <ExpiryCard
         expiry={assessment.expiry || {}}

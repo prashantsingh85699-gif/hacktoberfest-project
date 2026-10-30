@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Camera, Upload, Trash2, HelpCircle, Shield, AlertCircle, Sparkles, CheckCircle2, ChevronDown, ChevronUp, Lightbulb } from 'lucide-react';
+import { Camera, Upload, Trash2, HelpCircle, Shield, AlertCircle, Sparkles, CheckCircle2, ChevronDown, ChevronUp, Lightbulb, Zap } from 'lucide-react';
 import { processImageFile } from '../../lib/image.js';
 import { LiveCameraModal } from './LiveCameraModal.jsx';
 
@@ -65,6 +65,8 @@ export function ScannerStep1Upload({
   setImages,
   hints,
   setHints,
+  autoMode = true,
+  setAutoMode,
   onStartAnalysis,
 }) {
   const [errorMsg, setErrorMsg] = useState('');
@@ -444,15 +446,45 @@ export function ScannerStep1Upload({
         </div>
       </div>
 
+      {/* Automated 1-Click Toggle */}
+      {setAutoMode && (
+        <div className="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-slate-900 text-indigo-400 flex items-center justify-center shrink-0">
+              <Zap className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-slate-900 block">
+                Instant Automated Inspection
+              </span>
+              <span className="text-[11px] text-slate-500 block">
+                Auto-analyzes dates, checks packaging validity, and opens result directly
+              </span>
+            </div>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer shrink-0">
+            <input
+              type="checkbox"
+              checked={autoMode}
+              onChange={(e) => setAutoMode(e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-slate-900"></div>
+          </label>
+        </div>
+      )}
+
       {/* Primary Proceed CTA */}
-      <div className="pt-2">
+      <div className="pt-1">
         <button
           type="button"
           disabled={images.length === 0 || processing}
           onClick={onStartAnalysis}
-          className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 disabled:from-slate-300 disabled:to-slate-300 text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-md hover:shadow-xl transition-all active:scale-[0.98] min-h-[52px]"
+          className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-200 text-white disabled:text-slate-400 font-bold text-sm sm:text-base rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-[0.98] min-h-[52px]"
         >
-          Proceed to Inspection ({images.length} {images.length === 1 ? 'photo' : 'photos'})
+          <Zap className="w-4 h-4 text-amber-400" />
+          {autoMode ? 'Auto-Inspect & Generate Result' : 'Proceed to Inspection'}{' '}
+          ({images.length} {images.length === 1 ? 'photo' : 'photos'})
         </button>
       </div>
 

@@ -271,13 +271,24 @@ export function assess({
   }
 
   // 8. Rule: No Expiry Data
+  const hasZeroDates = dates.length === 0 && labelRules.length === 0 && !isNonPerishable;
   if (!primaryStatus) {
-    if (!investigation || !investigation.ran) {
-      primaryStatus = PRIMARY_STATUS.EXPIRY_NOT_FOUND;
-      expiry.provenance = PROVENANCE.UNKNOWN;
-    } else {
-      primaryStatus = PRIMARY_STATUS.EXPIRY_NOT_FOUND;
-      expiry.provenance = PROVENANCE.UNKNOWN;
+    primaryStatus = PRIMARY_STATUS.EXPIRY_NOT_FOUND;
+    expiry.provenance = PROVENANCE.UNKNOWN;
+    if (hasZeroDates) {
+      flags.push({
+        type: 'INVALID_UNDATED_PACKAGING',
+        severity: 'high',
+        message: 'Invalid / Undated Packaging: No manufacturing date (MFG), packing date, or expiration date was found on this packaging.',
+      });
+      if (!unknownMessage) {
+        if (investigation && investigation.ran) {
+          unknownMessage = EXACT_UNKNOWN_MESSAGE;
+        } else {
+          unknownMessage = 'Invalid or undated packaging: Neither a manufacturing start date (MFG), packing date, nor an expiration date was found on this packaging.';
+        }
+      }
+    } else if (investigation && investigation.ran) {
       unknownMessage = EXACT_UNKNOWN_MESSAGE;
     }
   }
@@ -309,5 +320,6 @@ export function assess({
     flags,
     recommendation,
     unknownMessage,
+    isUndatedPackaging: hasZeroDates,
   };
 }

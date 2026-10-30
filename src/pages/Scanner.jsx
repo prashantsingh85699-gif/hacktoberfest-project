@@ -17,6 +17,7 @@ export function Scanner() {
   const [hints, setHints] = useState({});
   const [extractionResult, setExtractionResult] = useState(null);
   const [isCancelled, setIsCancelled] = useState(false);
+  const [autoMode, setAutoMode] = useState(true);
 
   const startAnalysis = async () => {
     if (images.length === 0) return;
@@ -84,7 +85,34 @@ export function Scanner() {
       const scanResponse = await postScan(payload);
 
       setExtractionResult(scanResponse);
-      setStep(3);
+
+      if (autoMode) {
+        // Fully automated direct report generation
+        const id = `scan_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+        const autoRecord = {
+          id,
+          savedAt: new Date().toISOString(),
+          images: images.map((img) => ({
+            role: img.role,
+            dataUrl: img.dataUrl,
+          })),
+          extraction: scanResponse.extraction,
+          assessment: scanResponse.assessment,
+          investigation: null,
+          meta: scanResponse.meta || {},
+        };
+
+        try {
+          await saveScanRecord(autoRecord);
+        } catch {
+          // fallback to memory
+        }
+
+        toast.success('Product inspected automatically!');
+        navigate(`/result/${id}`, { state: { record: autoRecord } });
+      } else {
+        setStep(3);
+      }
     } catch (err) {
       console.error('Scan failed:', err);
       toast.error(err.message || 'Inspection failed');
@@ -186,6 +214,8 @@ export function Scanner() {
           setImages={setImages}
           hints={hints}
           setHints={setHints}
+          autoMode={autoMode}
+          setAutoMode={setAutoMode}
           onStartAnalysis={startAnalysis}
         />
       )}
