@@ -24,6 +24,7 @@ export default withErrors(async (req, res) => {
   const identity = body.identity || {};
   const barcode = body.barcode || null;
   const batchNumber = body.batchNumber || null;
+  const mfgDate = body.mfgDate || null;
 
   // 1. Identity gate
   const brand = (identity.brand || '').trim();
@@ -74,10 +75,17 @@ export default withErrors(async (req, res) => {
   let q1 = '';
   if (identity.category === 'medicine') {
     q1 = `"${brand}" "${name}" ${identity.strength || ''} ${identity.dosageForm || ''} prescribing information shelf life storage`.trim();
+  } else if (mfgDate) {
+    q1 = `"${brand}" "${name}" shelf life unopened from manufacture date`.trim();
   } else {
     q1 = `"${brand}" "${name}" ${identity.variant || ''} shelf life unopened`.trim();
   }
   queries.push(q1);
+
+  if (batchNumber) {
+    const qBatch = `"${brand}" "${name}" batch "${batchNumber}" expiration shelf life`.trim();
+    queries.push(qBatch);
+  }
 
   const search1 = await executeTavilySearch({ query: q1, depth: 'advanced', maxResults: 8 });
   totalCredits += search1.creditsUsed;

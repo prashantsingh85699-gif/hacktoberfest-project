@@ -43,11 +43,13 @@ export function Result() {
     try {
       const barcodeVal = record.extraction?.barcodes?.[0]?.value || null;
       const batchVal = record.extraction?.batchNumbers?.[0]?.value || null;
+      const mfgDate = record.extraction?.dates?.find((d) => d.kind === 'MFG')?.parsed?.iso || null;
 
       const response = await postInvestigate({
         identity: record.extraction.product,
         barcode: barcodeVal,
         batchNumber: batchVal,
+        mfgDate,
       });
 
       const updatedInvestigation = response.investigation;
@@ -75,6 +77,22 @@ export function Result() {
       setIsInvestigating(false);
     }
   };
+
+  // Auto-investigate when expiry date is missing but product has start date (MFG) or clues
+  useEffect(() => {
+    if (
+      record &&
+      !record.investigation?.ran &&
+      !isInvestigating &&
+      (record.assessment?.primaryStatus === 'EXPIRY_NOT_FOUND' || record.assessment?.expiry?.provenance === 'UNKNOWN') &&
+      record.extraction?.product?.name &&
+      record.extraction?.product?.brand &&
+      !record.extraction?.product?.isNonPerishable &&
+      !record.assessment?.isUndatedPackaging
+    ) {
+      handleTriggerInvestigation();
+    }
+  }, [record]);
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this scan from history?')) return;
@@ -220,6 +238,40 @@ export function Result() {
         images={record.images || []}
         findings={damage?.findings || []}
       />
+
+      {/* Online Verification Proof Card */}
+      {record.investigation?.conclusion?.type === 'SHELF_LIFE' && (
+        <div className="bg-emerald-50/70 border border-emerald-300 rounded-2xl p-5 shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-emerald-600" />
+              <h4 className="font-heading font-bold text-sm text-emerald-950">
+                Official Manufacturer Proof Found Online
+              </h4>
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300/80">
+              Verified Web Evidence
+            </span>
+          </div>
+
+          <p className="text-xs text-slate-700 leading-relaxed">
+            We searched official repositories and found verbatim documentation matching this exact product:
+          </p>
+
+          <blockquote className="p-3 bg-white rounded-xl border border-emerald-200/80 font-serif italic text-xs text-slate-800 shadow-2xs leading-relaxed">
+            "{record.investigation.conclusion.quote}"
+          </blockquote>
+
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px]">
+            <span className="text-emerald-800 font-semibold flex items-center gap-1">
+              ✓ Verified matching shelf life: {record.investigation.conclusion.amount} {record.investigation.conclusion.unit}
+            </span>
+            <span className="text-slate-500 font-mono text-[10px]">
+              Formula: Confirmed Start Date (MFG) + {record.investigation.conclusion.amount} {record.investigation.conclusion.unit} - 1 day
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Manufacturer Investigation Accordion */}
       <InvestigationAccordion
